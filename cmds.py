@@ -1,6 +1,6 @@
 # All possible player commands must fall under the dispatcher function
-# Returns True or False depending on if main loop should continue or wait for
-# additional player input.
+# Returns True or False depending on if main loop should continue (True) or wait
+# for additional player input (False).
 def dispatcher(room, player, command):
 
     def look(room, player, args):
@@ -20,7 +20,11 @@ def dispatcher(room, player, command):
                                              exitstr))
         return False
 
-    index = { "look": look }
+    def exit(room, player, args):
+        print("Thank you for playing. Goodbye!")
+        return True
+
+    index = { "look": look, "x": exit, "exit": exit }
 
     if command[0] in index:
         return index[command[0]](room, player, command[1:])
