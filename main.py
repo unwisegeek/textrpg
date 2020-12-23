@@ -13,7 +13,7 @@ def exithandler(num, exitdir):
 
 while "x" not in command:
     continue_loop = False
-    cmds.dispatcher(room, player, ["look"])
+    room, player, continue_loop = cmds.handler(room, player, ["look"])
 
     while not continue_loop:
         command = input("Command: ").lower()
@@ -24,7 +24,8 @@ while "x" not in command:
         # Command handlers
         if command.split(' ')[0]:
             if command[0] not in "nsew":
-                continue_loop = cmds.dispatcher(room, player, command.split(' '))
+                room, player, continue_loop = cmds.handler(room, player, \
+                                                           command.split(' '))
 
         # Exit handlers
         if command in "nsew":

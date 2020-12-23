@@ -42,6 +42,6 @@ room = [{
             "n": {"leadsto": -1, "isclosed": False, "islocked": False},
             "s": {"leadsto": -1, "isclosed": False, "islocked": False},
             "e": {"leadsto": -1, "isclosed": False, "islocked": False},
-            "w": {"leadsto":  3, "isclosed": False, "islocked": False}
+            "w": {"leadsto":  3, "isclosed": False, "islocked": True}
         },
 ]
