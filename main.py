@@ -6,8 +6,8 @@ keyboardinput = " "
 
 
 def exithandler(num, exitdir):
-    if room[num][exitdir] != -1:
-        return room[num][exitdir]
+    if room[num][exitdir]["leadsto"] != -1:
+        return room[num][exitdir]["leadsto"]
     return -1
 
 
@@ -16,8 +16,11 @@ while "x" not in keyboardinput.lower():
     exitstr = ""
     exit_list = ["n", "s", "e", "w"]
     for exit in exit_list:
-        if room[roomnum][exit] != -1:
-            exitstr += "{} ".format(exit)
+        if room[roomnum][exit]["leadsto"] != -1:
+            if room[roomnum][exit]["islocked"]:
+                exitstr += "<{}> ".format(exit)
+            else:
+                exitstr += "{} ".format(exit)
 
     print("{}\n{}\n\nExits: {}\n".format(room[roomnum]['name'],
                                          room[roomnum]['desc'],
