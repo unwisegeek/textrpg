@@ -6,8 +6,8 @@ keyboardinput = " "
 
 
 def exithandler(num, exitdir):
-    if room[num][exitdir]] != -1:
-        return room[num][exitvars[exitdir]]
+    if room[num][exitdir] != -1:
+        return room[num][exitdir]
     return -1
 
 
@@ -19,9 +19,15 @@ while "x" not in keyboardinput.lower():
         if room[roomnum][exit] != -1:
             exitstr += "{} ".format(exit)
 
-    print("{}\n{}\n\nExits: {}\n".format(room[roomnum]['name'], room[roomnum]['desc'], exitstr))
+    print("{}\n{}\n\nExits: {}\n".format(room[roomnum]['name'],
+                                         room[roomnum]['desc'],
+                                         exitstr))
     keyboardinput = input("Command: ")
 
     # Exit handlers
     if keyboardinput.lower() in "nsew":
-        roomnum = exithandler(roomnum, keyboardinput.lower())
+        new_roomnum = exithandler(roomnum, keyboardinput.lower())
+        if new_roomnum == -1:
+            print("You cannot go in that direction.")
+        else:
+            roomnum = new_roomnum
