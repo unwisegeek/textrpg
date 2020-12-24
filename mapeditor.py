@@ -155,36 +155,40 @@ while choice not in EXIT_COMMANDS:
         # Room Number
         if option_index[choice][1] == "num":
             while not proceed:
-                choice = input("Please enter a room number: ")
+                user_input = input("Please enter a room number: ")
                 # Validate input. Must be 0-99999 and not be assigned to another
                 # room.
                 try:
-                    t = int(choice)
+                    t = int(user_input)
                 except ValueError:
                     print("Room number must be a number!")
                     sleep(1)
                     continue
                 else:
-                    new_number = int(choice)
+                    new_number = int(user_input)
                     if 0 < new_number < 99999:
-                        if not room_num_exists(room, new_number):
+                        if not room_num_exists(room, new_number) or \
+                        new_number == room[index]["num"]:
                             # Tests pass.
                             room[index]["num"] = new_number
                             proceed = True
                         else:
                             print("Number already exists!")
+                            continue
                     else:
                         print("The number must be higher than 0 and lower than 99999.")
+                        continue
 
         if option_index[choice][1] == "name":
+            user_input = ""
             proceed = False
             while not proceed:
-                choice = input("Please enter a room name: ")
+                user_input = input("Please enter a room name: ")
                 # Validate input. Must be a string and not blank.
-                if choice == "":
+                if user_input == "":
                     print("Cannot accept a blank string.")
                 else:
-                    room[index]["name"] = choice
+                    room[index]["name"] = user_input
                     proceed = True
 
         if option_index[choice][1] == "desc":
