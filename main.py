@@ -1,17 +1,28 @@
 from rooms import room
 import cmds
+import art
 
 # Initial Variables
+quit_game = False
 command = ""
 player = { "location": 0
 }
+
+def splashscreen():
+    art.tprint("SUD", font="impossible")
+    print("Welcome to Single User Dungeon...\n\n")
+    char_name = input("Please enter your character name: ")
+    print("\nWelcome, {}! Now entering the dungeon!")
+
 
 def exithandler(num, exitdir):
     if room[num][exitdir]["leadsto"] != -1:
         return room[num][exitdir]["leadsto"]
     return -1
 
-while "x" not in command:
+splashscreen()
+
+while not quit_game:
     continue_loop = False
     room, player, continue_loop = cmds.handler(room, player, ["look"])
 
@@ -42,5 +53,6 @@ while "x" not in command:
                 player["location"] = new_roomnum
                 continue_loop = True
 
-        if command in "x":
+        if command in "q" or command in "quit" or command in "x":
             continue_loop = True
+            quit_game = True

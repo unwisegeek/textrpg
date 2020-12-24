@@ -94,8 +94,9 @@ def handler(room, player, command):
     # will invoke.
     index = {
         "look": look,
+        "q": exit,
+        "quit": exit,
         "x": exit,
-        "exit": exit,
         "open": open,
         "close": close,
         "unlock": unlock
