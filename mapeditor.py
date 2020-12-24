@@ -60,16 +60,20 @@ while choice not in EXIT_COMMANDS:
             t=room[index+1]["name"]
         except IndexError:
             index = 0
+            continue
         else:
             index += 1
+            continue
 
     if choice == "<":
         if index > 0:
             try:
                 t=room[index-1]["name"]
             except IndexError:
-                index = len(room)
+                index = len(room) - 1
+                continue
             else:
                 index -= 1
         else:
             index = len(room) - 1
+            continue
