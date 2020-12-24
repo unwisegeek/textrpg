@@ -97,6 +97,8 @@ while choice not in EXIT_COMMANDS:
         option_index[opt3] = [dir, "islocked"]
         opt_list_index += 3
     print("\n\n")
+    # print(json.dumps(room, indent=2))
+    # print("\n\n")
     choice = input("Please enter your selection: ")
 
     # Bypass this logic if a quit command is received.
@@ -105,7 +107,7 @@ while choice not in EXIT_COMMANDS:
 
     if choice == ">":
         try:
-            t=room[index+1]["name"]
+            t=room[index+1]["num"]
         except IndexError:
             index = 0
             continue
@@ -125,6 +127,14 @@ while choice not in EXIT_COMMANDS:
         else:
             index = len(room) - 1
             continue
+
+    if choice in [ "new", "create" ]:
+        room += [ room_template ]
+        index = len(room) - 1 # Set the last value
+        print(room)
+        input("Press enter to continue.")
+        proceed = True
+        continue
 
     if choice == "save":
         if loaded_map == "":
@@ -166,7 +176,7 @@ while choice not in EXIT_COMMANDS:
                     continue
                 else:
                     new_number = int(user_input)
-                    if 0 < new_number < 99999:
+                    if -1 < new_number < 100000:
                         if not room_num_exists(room, new_number) or \
                         new_number == room[index]["num"]:
                             # Tests pass.
@@ -178,6 +188,16 @@ while choice not in EXIT_COMMANDS:
                     else:
                         print("The number must be higher than 0 and lower than 99999.")
                         continue
+                continue
+            # Handle true/false toggle values.
+            if option_index[choice][1] in ["leadsto", "isclosed", "islocked"]:
+                dir = option_index[choice][0]
+                value = option_index[choice][1]
+                if room[index][dir][value]:
+                    room[index][dir][value] = False
+                else:
+                    room[index][dir][value] = True
+                proceed = True
 
         if option_index[choice][1] == "name":
             user_input = ""
@@ -225,17 +245,6 @@ while choice not in EXIT_COMMANDS:
             room[index]["desc"] = contents
             continue
 
-    # Handle true/false toggle values.
-    if option_index[choice][1] in ["leadsto", "isclosed", "islocked"]:
-        dir = option_index[choice][0]
-        value = option_index[choice][1]
-        if room[index][dir][value]:
-            room[index][dir][value] = False
-            continue
-        else:
-            room[index][dir][value] = True
-            continue
-        continue
 
     if choice == "pio":
         print(option_index)
