@@ -1,3 +1,9 @@
+def room_num_exists(room, new_number):
+    for each in range(0, len(room)):
+        if room[each]["num"] == new_number:
+            return True
+    return False
+
 # RoomNum, RoomName, RoomDescription, North, South, East, West
 room_template = {
             "num": -1,
