@@ -1,4 +1,13 @@
 # RoomNum, RoomName, RoomDescription, North, South, East, West
+room_template = {
+            "num": -1,
+            "name": "",
+            "desc": "",
+            "n": {"leadsto": -1, "isclosed": False, "islocked": False},
+            "s": {"leadsto": -1, "isclosed": False, "islocked": False},
+            "e": {"leadsto": -1, "isclosed": False, "islocked": False},
+            "w": {"leadsto": -1, "isclosed": False, "islocked": False}}
+
 room = [{
             "num": 0,
             "name": "The Main Room",

@@ -1,5 +1,6 @@
 import art, json, os
 from time import sleep
+from rooms import room_template
 
 # Initial Variables
 index = 0
@@ -11,16 +12,54 @@ DIR_LIST = [["North:", "n"], ["South:", "s"], ["East:", "e"], ["West:", "w"]]
 OPT_LIST = ["a","b","c","d","e","f","g","h","i","j","k","l","m",
             "n","o","p","q","r","s","t","u","v","w","x","y","z"]
 option_index = {}
-
-# Load default map file
-file = open('roomfile', 'r')
-room = json.loads(file.read())
+room = []
+proceed = False
+loaded_map = ""
 
 def cls():
     if os.name == "nt":
         os.system('cls')
     else:
         os.system('clear')
+
+# Start main Logic
+cls()
+print ("Welcome to...")
+art.tprint("Map Editor", font="tinker-toy")
+print("\n\n")
+
+while choice not in EXIT_COMMANDS and not proceed:
+    choice = input("Do you wish to start a [new] map, [load] a saved map, "
+                    "or [list] saved maps? ")
+
+    if choice == "new":
+        room = [ room_template ]
+        proceed = True
+        continue
+
+    if choice == "list":
+        for file in os.listdir(os.getcwd()):
+            if file.endswith(".map"):
+                print(file)
+        continue
+
+    if choice == "load":
+        filename = input("Please enter the filename you wish to load, "
+                         "with or without the .map exension: ")
+        try:
+            if filename.endswith(".map"):
+                file = open(filename, 'r')
+            else:
+                file = open("{}.map".format(filename), 'r')
+                filename += ".map"
+        except:
+            print("Could not open file for reading.")
+            sleep(1)
+        else:
+            room = json.loads(file.read())
+            loaded_map = filename
+            proceed = True
+            continue
 
 while choice not in EXIT_COMMANDS:
     cls()
@@ -77,3 +116,28 @@ while choice not in EXIT_COMMANDS:
         else:
             index = len(room) - 1
             continue
+
+    if choice == "save":
+        if loaded_map == "":
+            filename = input("Please enter the filename, "
+                            "with or without .map extension: ")
+        else:
+            filename = input("Please enter the filename, with or without"
+                             ".map extension: [{}] ".format(loaded_map))
+            if filename == "":
+                filename = loaded_map
+        try:
+            if filename.endswith(".map"):
+                file = open(filename, 'w')
+            else:
+                file = open("{}.map".format(filename), 'w')
+        except:
+            print("Could not open file for writing.")
+        else:
+            file.write(json.dumps(room))
+            file.close()
+            print("File written.")
+
+    if choice == "pio":
+        print(option_index)
+        input("Press enter to continue.")
