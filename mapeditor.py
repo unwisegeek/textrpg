@@ -10,6 +10,7 @@ EXIT_COMMANDS = ["quit", "exit", "ex"]
 DIR_LIST = [["North:", "n"], ["South:", "s"], ["East:", "e"], ["West:", "w"]]
 OPT_LIST = ["a","b","c","d","e","f","g","h","i","j","k","l","m",
             "n","o","p","q","r","s","t","u","v","w","x","y","z"]
+option_index = {}
 
 # Load default map file
 file = open('roomfile', 'r')
@@ -23,12 +24,20 @@ def cls():
 
 while choice not in EXIT_COMMANDS:
     cls()
+    option_index = {}
     art.tprint("Map Editor", font="tinker-toy")
     print("Index: {:>4}".format(index))
     print("a. Room Number: {:>4}".format(room[index]["num"]))
     print("b. Room Name: {}".format(room[index]["name"]))
     print("c. Room Description: {}\n\n".format(room[index]["desc"]))
-    opt_list_index = 3 # Starts on
+    opt_list_index = 3 # Set to the following index number.
+    option_index["a"] = [False, "num"]
+    option_index["b"] = [False, "name"]
+    option_index["c"] = [False, "desc"]
+
+
+
+    # Generate the editor layout for directional entries.
     for i in range(0, len(DIR_LIST)):
         dir_name, dir = DIR_LIST[i][0], DIR_LIST[i][1]
         opt1, opt2, opt3 = OPT_LIST[opt_list_index], \
@@ -39,6 +48,9 @@ while choice not in EXIT_COMMANDS:
         dir_name, opt1, room[index][dir]["leadsto"], opt2, str(room[index][dir]["isclosed"]),
         opt3, str(room[index][dir]["islocked"])
         ))
+        option_index[opt1] = [dir, "leadsto"]
+        option_index[opt2] = [dir, "isclosed"]
+        option_index[opt3] = [dir, "islocked"]
         opt_list_index += 3
     print("\n\n")
     choice = input("Please enter your selection: ")
@@ -47,8 +59,7 @@ while choice not in EXIT_COMMANDS:
         try:
             t=room[index+1]["name"]
         except IndexError:
-            print("You are viewing the last room.")
-            sleep(1)
+            index = 0
         else:
             index += 1
 
@@ -57,10 +68,8 @@ while choice not in EXIT_COMMANDS:
             try:
                 t=room[index-1]["name"]
             except IndexError:
-                print("You are viewing the first room.")
-                sleep(1)
+                index = len(room)
             else:
                 index -= 1
         else:
-            print("You are viewing the first room.")
-            sleep(1)
+            index = len(room) - 1
