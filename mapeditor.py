@@ -82,17 +82,26 @@ while choice not in EXIT_COMMANDS:
         opt1, opt2, opt3 = OPT_LIST[opt_list_index], \
                            OPT_LIST[opt_list_index + 1], \
                            OPT_LIST[opt_list_index + 2]
+        leadsto = room[index][dir]["leadsto"]
+        if leadsto == -1:
+            leadsto_name = "No Exit"
+        else:
+            leadsto_name = room[leadsto]["name"]
+        isclosed = str(room[index][dir]["isclosed"])
+        islocked = str(room[index][dir]["islocked"])
 
-        print("{:>6} {}. Leads to: {:>6} | {}. Closed: {:>5} | {}. Locked: {:>5}".format(
-        dir_name, opt1, room[index][dir]["leadsto"], opt2, str(room[index][dir]["isclosed"]),
-        opt3, str(room[index][dir]["islocked"])
-        ))
+        print("{:>6} {}. Leads to: {:>6} [{:>30}] | {}. Closed: {:>5} | {}. Locked: {:>5}".format(
+        dir_name, opt1, leadsto, leadsto_name, opt2, isclosed, opt3, islocked))
         option_index[opt1] = [dir, "leadsto"]
         option_index[opt2] = [dir, "isclosed"]
         option_index[opt3] = [dir, "islocked"]
         opt_list_index += 3
     print("\n\n")
     choice = input("Please enter your selection: ")
+
+    # Bypass this logic if a quit command is received.
+    if choice in EXIT_COMMANDS:
+        continue
 
     if choice == ">":
         try:
@@ -133,10 +142,13 @@ while choice not in EXIT_COMMANDS:
                 file = open("{}.map".format(filename), 'w')
         except:
             print("Could not open file for writing.")
+            continue
         else:
             file.write(json.dumps(room))
             file.close()
             print("File written.")
+            continue
+        continue
 
     if choice in option_index:
         proceed = False
@@ -207,7 +219,19 @@ while choice not in EXIT_COMMANDS:
                       "convenience. Press enter to continue.")
             # Write the new desc to the room db
             room[index]["desc"] = contents
+            continue
 
+    # Handle true/false toggle values.
+    if option_index[choice][1] in ["leadsto", "isclosed", "islocked"]:
+        dir = option_index[choice][0]
+        value = option_index[choice][1]
+        if room[index][dir][value]:
+            room[index][dir][value] = False
+            continue
+        else:
+            room[index][dir][value] = True
+            continue
+        continue
 
     if choice == "pio":
         print(option_index)
