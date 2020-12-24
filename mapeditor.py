@@ -164,6 +164,16 @@ while choice not in EXIT_COMMANDS:
                     else:
                         print("The number must be higher than 0 and lower than 99999.")
 
+        if option_index[choice][1] == "name":
+            proceed = False
+            while not proceed:
+                choice = input("Please enter a room name: ")
+                # Validate input. Must be a string and not blank.
+                if choice == "":
+                    print("Cannot accept a blank string.")
+                else:
+                    room[index]["name"] = choice
+                    proceed = True
 
     if choice == "pio":
         print(option_index)
