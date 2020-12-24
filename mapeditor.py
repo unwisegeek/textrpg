@@ -1,4 +1,4 @@
-import art, json, os
+import art, json, os, subprocess, string, random
 from time import sleep
 from rooms import room_template, room_num_exists
 
@@ -174,6 +174,40 @@ while choice not in EXIT_COMMANDS:
                 else:
                     room[index]["name"] = choice
                     proceed = True
+
+        if option_index[choice][1] == "desc":
+            # Get a temporary file name
+            random_string = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(8)])
+            tmp_filename = "{}.tmp".format(random_string)
+            # If a description for the room isn't blank, load it into the
+            # temporary file.
+            if room[index]["desc"] != "":
+                file = open(tmp_filename, 'w')
+                file.write(room[index]["desc"])
+                file.close()
+            # Open the file in editor. Change this later.
+            if os.name == "nt":
+                p = subprocess.Popen("notepad {}".format(tmp_filename), shell=True)
+                # Wait for notepad to close before continuing program execution
+                process_state = p.poll()
+                while process_state == None:
+                    process_state = p.poll()
+            else:
+                p = subprocess.Popen("editor {}".format(tmp_filename), shell=True)
+
+            # Read the contents of the temp file and assign it to the room db
+            file = open(tmp_filename, 'r')
+            contents = file.read()
+            file.close()
+            try:
+                os.remove(tmp_filename)
+            except:
+                input("Can't delete temporary files. Please remove all .tmp "
+                      "files from the script directory at your earliest"
+                      "convenience. Press enter to continue.")
+            # Write the new desc to the room db
+            room[index]["desc"] = contents
+
 
     if choice == "pio":
         print(option_index)
