@@ -1,6 +1,6 @@
 import art, json, os
 from time import sleep
-from rooms import room_template
+from rooms import room_template, room_num_exists
 
 # Initial Variables
 index = 0
@@ -83,7 +83,7 @@ while choice not in EXIT_COMMANDS:
                            OPT_LIST[opt_list_index + 1], \
                            OPT_LIST[opt_list_index + 2]
 
-        print("{:>6} {}. Leads to: {:>4} | {}. Closed: {:>5} | {}. Locked: {:>5}".format(
+        print("{:>6} {}. Leads to: {:>6} | {}. Closed: {:>5} | {}. Locked: {:>5}".format(
         dir_name, opt1, room[index][dir]["leadsto"], opt2, str(room[index][dir]["isclosed"]),
         opt3, str(room[index][dir]["islocked"])
         ))
@@ -137,6 +137,33 @@ while choice not in EXIT_COMMANDS:
             file.write(json.dumps(room))
             file.close()
             print("File written.")
+
+    if choice in option_index:
+        proceed = False
+        # Room Number
+        if option_index[choice][1] == "num":
+            while not proceed:
+                choice = input("Please enter a room number: ")
+                # Validate input. Must be 0-99999 and not be assigned to another
+                # room.
+                try:
+                    t = int(choice)
+                except ValueError:
+                    print("Room number must be a number!")
+                    sleep(1)
+                    continue
+                else:
+                    new_number = int(choice)
+                    if 0 < new_number < 99999:
+                        if not room_num_exists(room, new_number):
+                            # Tests pass.
+                            room[index]["num"] = new_number
+                            proceed = True
+                        else:
+                            print("Number already exists!")
+                    else:
+                        print("The number must be higher than 0 and lower than 99999.")
+
 
     if choice == "pio":
         print(option_index)
