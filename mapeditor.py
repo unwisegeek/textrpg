@@ -113,7 +113,10 @@ while choice not in EXIT_COMMANDS:
         if leadsto == -1:
             leadsto_name = "No Exit"
         else:
-            leadsto_name = room[leadsto]["name"]
+            try:
+                leadsto_name = room[leadsto]["name"]
+            except IndexError:
+                leadsto_name = "Non-Existant Room"
         isclosed = str(room[index][dir]["isclosed"])
         islocked = str(room[index][dir]["islocked"])
 
@@ -158,8 +161,6 @@ while choice not in EXIT_COMMANDS:
     if choice in [ "new", "create" ]:
         room.append(room_template)
         index = len(room) - 1 # Set the last value
-        print(room)
-        input("Press enter to continue.")
         proceed = True
         continue
 
@@ -211,11 +212,31 @@ while choice not in EXIT_COMMANDS:
                         else:
                             print("Number already exists!")
                     else:
-                        print("The number must be higher than 0 and lower than 99999.")
+                        print("The number must be higher than 0 "
+                        "and lower than 99999.")
             continue
 
+        if option_index[choice][1] == "leadsto":
+            while True:
+                user_input = input("Please enter a new room number: ")
+                try:
+                    t = int(user_input)
+                except ValueError:
+                    print("Value entered must be a number between 0 "
+                    "and 99999.")
+                else:
+                    new_number = int(user_input)
+                    dir = option_index[choice][0]
+                    if -1 < new_number < 100000:
+                        room[index][dir]["leadsto"] = new_number
+                        break
+                    else:
+                        print("Value entered must be a number between 0 "
+                        "and 99999.")
+
+
         # Handle true/false toggle values.
-        if option_index[choice][1] in ["leadsto", "isclosed", "islocked"]:
+        if option_index[choice][1] in ["isclosed", "islocked"]:
             dir = option_index[choice][0]
             value = option_index[choice][1]
             if room[index][dir][value]:
