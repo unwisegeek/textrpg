@@ -1,4 +1,4 @@
-from rooms import room
+import rooms
 import cmds
 import art
 
@@ -7,6 +7,9 @@ quit_game = False
 command = ""
 player = { "location": 0
 }
+
+# Load the map
+room = rooms.load_map("default.map")
 
 def splashscreen():
     art.tprint("SUD", font="impossible")
