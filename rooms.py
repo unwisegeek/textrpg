@@ -1,3 +1,5 @@
+import json
+
 def room_num_exists(room, new_number):
     for each in range(0, len(room)):
         if room[each]["num"] == new_number:
