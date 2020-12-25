@@ -33,8 +33,35 @@ while choice not in EXIT_COMMANDS and not proceed:
                     "or [list] saved maps? ")
 
     if choice == "new":
-        room = [ room_template ]
-        proceed = True
+        filename = input("Please enter a filename for the new map: ")
+        if filename.endswith(".map"):
+            pass
+        else:
+            filename += ".map"
+
+        if os.path.exists(filename):
+            print("File already exists.")
+            sleep(1)
+            continue
+        else:
+            try:
+                file = open(filename, 'w')
+            except:
+                print("Could not open file for writing.")
+            else:
+                file.write(json.dumps([ room_template ]))
+                file.close()
+
+            try:
+                file = open(filename, 'r')
+            except:
+                print("Could not open the file for reading.")
+                sleep(1)
+            else:
+                room = json.loads(file.read())
+                loaded_map = filename
+                proceed = True
+                continue
         continue
 
     if choice == "list":
@@ -129,7 +156,7 @@ while choice not in EXIT_COMMANDS:
             continue
 
     if choice in [ "new", "create" ]:
-        room += [ room_template ]
+        room.append(room_template)
         index = len(room) - 1 # Set the last value
         print(room)
         input("Press enter to continue.")
@@ -173,7 +200,6 @@ while choice not in EXIT_COMMANDS:
                 except ValueError:
                     print("Room number must be a number!")
                     sleep(1)
-                    continue
                 else:
                     new_number = int(user_input)
                     if -1 < new_number < 100000:
@@ -184,20 +210,19 @@ while choice not in EXIT_COMMANDS:
                             proceed = True
                         else:
                             print("Number already exists!")
-                            continue
                     else:
                         print("The number must be higher than 0 and lower than 99999.")
-                        continue
-                continue
-            # Handle true/false toggle values.
-            if option_index[choice][1] in ["leadsto", "isclosed", "islocked"]:
-                dir = option_index[choice][0]
-                value = option_index[choice][1]
-                if room[index][dir][value]:
-                    room[index][dir][value] = False
-                else:
-                    room[index][dir][value] = True
-                proceed = True
+            continue
+
+        # Handle true/false toggle values.
+        if option_index[choice][1] in ["leadsto", "isclosed", "islocked"]:
+            dir = option_index[choice][0]
+            value = option_index[choice][1]
+            if room[index][dir][value]:
+                room[index][dir][value] = False
+            else:
+                room[index][dir][value] = True
+            continue
 
         if option_index[choice][1] == "name":
             user_input = ""
@@ -210,40 +235,41 @@ while choice not in EXIT_COMMANDS:
                 else:
                     room[index]["name"] = user_input
                     proceed = True
-
-        if option_index[choice][1] == "desc":
-            # Get a temporary file name
-            random_string = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(8)])
-            tmp_filename = "{}.tmp".format(random_string)
-            # If a description for the room isn't blank, load it into the
-            # temporary file.
-            if room[index]["desc"] != "":
-                file = open(tmp_filename, 'w')
-                file.write(room[index]["desc"])
-                file.close()
-            # Open the file in editor. Change this later.
-            if os.name == "nt":
-                p = subprocess.Popen("notepad {}".format(tmp_filename), shell=True)
-                # Wait for notepad to close before continuing program execution
-                process_state = p.poll()
-                while process_state == None:
-                    process_state = p.poll()
-            else:
-                p = subprocess.Popen("editor {}".format(tmp_filename), shell=True)
-
-            # Read the contents of the temp file and assign it to the room db
-            file = open(tmp_filename, 'r')
-            contents = file.read()
-            file.close()
-            try:
-                os.remove(tmp_filename)
-            except:
-                input("Can't delete temporary files. Please remove all .tmp "
-                      "files from the script directory at your earliest"
-                      "convenience. Press enter to continue.")
-            # Write the new desc to the room db
-            room[index]["desc"] = contents
             continue
+
+            if option_index[choice][1] == "desc":
+                # Get a temporary file name
+                random_string = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(8)])
+                tmp_filename = "{}.tmp".format(random_string)
+                # If a description for the room isn't blank, load it into the
+                # temporary file.
+                if room[index]["desc"] != "":
+                    file = open(tmp_filename, 'w')
+                    file.write(room[index]["desc"])
+                    file.close()
+                # Open the file in editor. Change this later.
+                if os.name == "nt":
+                    p = subprocess.Popen("notepad {}".format(tmp_filename), shell=True)
+                    # Wait for notepad to close before continuing program execution
+                    process_state = p.poll()
+                    while process_state == None:
+                        process_state = p.poll()
+                else:
+                    p = subprocess.Popen("editor {}".format(tmp_filename), shell=True)
+
+                # Read the contents of the temp file and assign it to the room db
+                file = open(tmp_filename, 'r')
+                contents = file.read()
+                file.close()
+                try:
+                    os.remove(tmp_filename)
+                except:
+                    input("Can't delete temporary files. Please remove all .tmp "
+                          "files from the script directory at your earliest"
+                          "convenience. Press enter to continue.")
+                # Write the new desc to the room db
+                room[index]["desc"] = contents
+                continue
 
 
     if choice == "pio":
