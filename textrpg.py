@@ -1,6 +1,7 @@
 import rooms
 import cmds
 import art
+import yaml
 
 # Initial Variables
 quit_game = False
@@ -8,12 +9,18 @@ command = ""
 player = { "location": 0
 }
 
-# Load the map
-room = rooms.load_map("default.map")
+# Load the Config
+config = yaml.safe_load(open("textrpg.conf", "r").read())
 
-def splashscreen():
-    art.tprint("SUD", font="impossible")
-    print("Welcome to Single User Dungeon...\n\n")
+# Load the map
+room = rooms.load_map(config["game"]["map"])
+
+def splashscreen(config):
+    # Get strings from Config
+    splash = config["game"]["splash"]
+    gamename = config["game"]["title"]
+    art.tprint(splash, font="impossible")
+    print("Welcome to {}...\n\n".format(gamename))
     char_name = input("Please enter your character name: ")
     print("\nWelcome, {}! Now entering the dungeon!")
 
@@ -23,7 +30,7 @@ def exithandler(num, exitdir):
         return room[num][exitdir]["leadsto"]
     return -1
 
-splashscreen()
+splashscreen(config)
 
 while not quit_game:
     continue_loop = False
